@@ -1,0 +1,14 @@
+settings:
+  conductor:
+    base: 'fedora:26'
+
+defaults:
+  workdir: "/share-place/files-to-share"
+
+services:
+  web:
+    from: 'fedora:26'
+    roles: ["file-sharing"]
+    working_dir: '{{ workdir }}'
+    command: ['python3', '-m', 'http.server', '--bind', '0.0.0.0', '9000']
+    ports: ["9000:9000"]

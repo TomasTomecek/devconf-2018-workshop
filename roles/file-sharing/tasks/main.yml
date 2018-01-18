@@ -1,0 +1,10 @@
+---
+- name: Create the directory structure.
+  file:
+    state: directory
+    path: "{{ workdir }}"
+    recurse: yes
+- name: Copy files to share
+  synchronize:
+    src: "/src/files-to-share"
+    dest: "{{ workdir }}"
