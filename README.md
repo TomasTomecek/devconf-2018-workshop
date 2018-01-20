@@ -2,13 +2,13 @@
 
 Agenda:
 
- 1. running default python http server in a container
+ 1. Running default python http server in a container.
  2. [ansible/ansible-container-demo](https://github.com/ansible/ansible-container-demo)
 
 
-## "Hello World"
+## "Hello World" project
 
-[The important link.](http://docs.ansible.com/ansible-container/)
+[The most important link.](http://docs.ansible.com/ansible-container/)
 
 
 ### Install it
@@ -18,7 +18,7 @@ $ pip2 install --user ansible-container[docker]
 ```
 
 
-### So, what do we do now?
+### Ehm, what does the project look like?
 
 We'll do
 
@@ -45,7 +45,6 @@ $ mkdir hello && cd hello
 ### `container.yml`
 
 ```
-# TODO: 27
 $ cat container.yml
 settings:
   conductor:
@@ -61,7 +60,7 @@ Let's build it and run it:
 
 ```
 $ ansible-container build
-$ ansible-container build
+$ ansible-container run
 ```
 
 
@@ -77,11 +76,13 @@ $ ansible-container build
   ```
   defaults:
     workdir: "/etc"
-
+  ```
+  ```
       working_dir: '{{ workdir }}'
   ```
 
 * I also want to put my files in.
+  * For that, we need add an Ansible role which will copy them.
 
 
 ### Orchestrated
