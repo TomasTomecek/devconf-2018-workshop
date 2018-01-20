@@ -86,3 +86,17 @@ $ ansible-container run
 
 
 ### Orchestrated
+
+Find registry inside openshift deployment:
+
+```
+$ oc login -u system:admin
+
+$ oc get svc --all-namespaces
+NAMESPACE   NAME              CLUSTER-IP     EXTERNAL-IP   PORT(S)                   AGE
+default     docker-registry   172.30.1.1     <none>        5000/TCP                  13m
+
+$ oc login
+
+$ docker login -u $(oc whoami) -p $(oc whoami -t) 172.30.1.1:5000
+```
