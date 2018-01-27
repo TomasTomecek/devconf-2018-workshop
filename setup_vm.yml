@@ -1,0 +1,79 @@
+---
+- name: set up a demo VM for the workshop
+  hosts:
+  - demo
+  become: yes
+  tasks:
+  - name: install epel
+    yum:
+      state: present
+      name: 'epel-release'
+  - name: install more
+    yum:
+      state: present
+      name: '{{ item }}'
+    with_items:
+    - python-pip
+    - git
+    - epel-release
+    - docker
+    - tmux
+    - screen
+    - python-virtualenv
+  - name: start docker
+    systemd:
+      name: docker
+      state: started
+      enabled: true
+  # I had to upgrade setuptools beforehand
+  - name: install a-c
+    command: pip install ansible-container[docker]
+  - name: ensure groups exists
+    group:
+      name: '{{ item }}'
+      state: present
+    with_items:
+    - docker
+    - demo
+  - name: create 30 users
+    user:
+      name: "devconf{{ item }}"
+      state: present
+      append: yes
+      groups: docker,demo
+      password: "{{ ('se4kryT' + item) | password_hash('sha512') }}"
+      update_password: on_create
+    with_sequence: count=30
+  - name: add me to docker group
+    user:
+      name: "tt"
+      append: yes
+      groups: docker
+  - name: pull images
+    command: docker pull {{ item }}
+    with_items:
+    - centos:7
+    - ansible/container-conductor-centos-7:0.9.2
+    - ansible/container-conductor-fedora-26:0.9.2
+  - name: create new virtualenv
+    command: virtualenv /venv
+  - name: clone a-c
+    git:
+      repo: https://github.com/ansible/ansible-container
+      dest: /ansible-container
+  - name: update venv
+    pip:
+      virtualenv: /venv
+      state: present
+      name: '{{ item }}'
+      extra_args: '-U'
+    with_items:
+    - pip
+    - setuptools
+  - name: install devel a-c to the venv
+    pip:
+      virtualenv: /venv
+      chdir: /ansible-container
+      editable: yes
+      state: present
+      name: .[docker]
